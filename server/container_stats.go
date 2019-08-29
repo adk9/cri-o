@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/cri-o/cri-o/internal/oci"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 	pb "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
 )
@@ -37,8 +38,8 @@ func (s *Server) ContainerStats(ctx context.Context, req *pb.ContainerStatsReque
 		recordOperation(operation, time.Now())
 		recordError(operation, err)
 	}()
-
-	container := s.GetContainer(req.ContainerId)
+	logrus.Debugf("ContainerStatsRequest %+v", req)
+	container := s.GetContainerFromShortID(req.ContainerId)
 	if container == nil {
 		return nil, fmt.Errorf("invalid container")
 	}
